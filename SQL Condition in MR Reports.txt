@@ -1,0 +1,39 @@
+    private real AmountGetFromSQL(date _fromdate,date _asOfDate,  str _AcFrom, str _AcTo,str _condition)
+    {
+        real _amount;
+        str _sql;
+        DataAreaId _companyid;
+
+        str _fromDt,_toDt;
+
+        Connection Con = new Connection();
+        Statement Stmt = Con.createStatement();
+        _companyid=curExt();
+        
+        _fromDt=any2str(_fromdate);
+        _toDt=any2Str(_asOfDate);
+        
+        //change by EVS on OCT 17 2022, due to multi currency it is not matched with MR, so we change to accouting currency
+        //_sql="SELECT  sum(REPORTINGCURRENCYAMOUNT) FROM generalJournalAccountEntry";
+        _sql="SELECT  sum(ACCOUNTINGCURRENCYAMOUNT) FROM generalJournalAccountEntry";
+        _sql+= " inner join    generalJournalEntry on  generalJournalAccountEntry.GeneralJournalEntry = generalJournalEntry.RecId";
+        _sql+=" and  generalJournalEntry.AccountingDate>='"+ _fromDt+"' and  generalJournalEntry.AccountingDate<='"+_toDt+"'  and  generalJournalEntry.SUBLEDGERVOUCHERDATAAREAID='"+_companyid+"'";
+        _sql+=" inner join  mainaccount  on mainaccount.RECID=generalJournalAccountEntry.MainAccount";
+        _sql+=" left join DimensionAttributeValueCombination on DimensionAttributeValueCombination.RECID=generalJournalAccountEntry.LEDGERDIMENSION";
+        _sql+=" where mainaccount.MainAccountId >='"+_AcFrom+"'  and mainaccount.MainAccountId <='"+ _AcTo +"'";        
+        
+        //sql condition 
+        if(_condition!="")
+        {
+            _sql+=" and " +_condition;
+        }
+        
+        ResultSet R =Stmt.executeQuery(_sql);
+
+        while ( R.next() )
+        {
+            _amount= any2Real(R.getString(1));
+        }
+
+        return _amount;
+    }

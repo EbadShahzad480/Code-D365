@@ -1,0 +1,235 @@
+public TempStr AmountInWords(real _num)
+{
+int numOfPennies = any2int(decRound(frac(_num), 2) * 100) mod 100;
+real amount = _num - frac(_num);
+int numOfTenths;
+str 20 ones[19], tenths[9], hundreds, thousands, millions, billions, trillions;
+
+
+
+
+
+
+
+int64 temp;
+str 200 returntxt;
+int64 amountInInt64;
+boolean checkStatus = false;
+#define.paise("Halala")
+
+
+
+
+
+
+
+real modOperator(real a1, real a2)
+{
+int tmpi;
+real tmp1, tmp2;
+tmp1 = a1 / a2;
+tmpi = real2int(tmp1);
+tmp2 = tmpi;
+return (tmp1 - tmp2)*a2;
+}
+
+
+
+
+
+
+
+real checkPower(real _amount, int64 _power)
+{
+int64 numOfPower;
+
+
+
+
+
+
+
+if (_amount >= _power)
+{
+amountInInt64 = real2double(_amount);
+numOfPower = amountInInt64 div _power;
+if (numOfPower >= 100)
+{
+temp = numOfPower div 100;
+returntxt = returntxt + ' ' + ones[temp] + ' ' + hundreds;
+numOfPower = numOfPower mod 100;
+}
+if (numOfPower >= 20)
+{
+temp = numOfPower div 10;
+returntxt = returntxt + ' ' + tenths[temp];
+numOfPower = numOfPower mod 10;
+}
+if (numOfPower >= 1)
+{
+returntxt = returntxt + ' ' + ones[numOfPower];
+numOfPower = numOfPower mod 10;
+}
+switch(_power)
+{
+case 1000000000000:
+returntxt = returntxt + ' ' + trillions;
+_amount = modOperator(_amount, 1000000000000.00);
+break;
+case 1000000000:
+returntxt = returntxt + ' ' + billions;
+_amount = modOperator(_amount, 1000000000);
+break;
+case 1000000:
+returntxt = returntxt + ' ' + millions;
+_amount = modOperator(_amount, 1000000);
+break;
+case 1000:
+returntxt = returntxt + ' ' + thousands;
+_amount = modOperator(_amount, 1000);
+break;
+case 100:
+returntxt = returntxt + ' ' + hundreds;
+_amount = modOperator(_amount, 100);
+break;
+default:
+break;
+}
+}
+return _amount;
+}
+
+
+
+
+
+
+
+;
+
+
+
+
+
+
+
+ones[1] = "@SYS26620";
+ones[2] = "@SYS26621";
+ones[3] = "@SYS26622";
+ones[4] = "@SYS26626";
+ones[5] = "@SYS26627";
+ones[6] = "@SYS26628";
+ones[7] = "@SYS26629";
+ones[8] = "@SYS26630";
+ones[9] = "@SYS26631";
+ones[10] = "@SYS26632";
+ones[11] = "@SYS26633";
+ones[12] = "@SYS26634";
+ones[13] = "@SYS26635";
+ones[14] = "@SYS26636";
+ones[15] = "@SYS26637";
+ones[16] = "@SYS26638";
+ones[17] = "@SYS26639";
+ones[18] = "@SYS26640";
+ones[19] = "@SYS26641";
+
+
+
+
+
+
+
+tenths[1] = 'Not used';
+tenths[2] = "@SYS26643";
+tenths[3] = "@SYS26644";
+tenths[4] = "@SYS26645";
+tenths[5] = "@SYS26646";
+tenths[6] = "@SYS26647";
+tenths[7] = "@SYS26648";
+tenths[8] = "@SYS26649";
+tenths[9] = "@SYS26650";
+
+
+
+
+
+
+
+hundreds = "@SYS26651";
+thousands = "@SYS26652";
+millions = "@SYS26653";
+billions = "@SYS26654";
+trillions = "@SYS101697";
+
+
+
+
+
+
+
+
+amount = checkPower(amount, 1000000000000);
+amount = checkPower(amount, 1000000000);
+amount = checkPower(amount, 1000000);
+amount = checkPower(amount, 1000);
+amount = checkPower(amount, 100);
+
+
+
+
+
+
+
+if (amount >= 20)
+{
+numOfTenths = real2int(amount) div 10;
+returntxt = returntxt + ' ' + tenths[numofTenths];
+numOfTenths = numOfTenths mod 10;
+amount = real2int(amount) mod 10;
+}
+if (amount >= 1)
+{
+numOfTenths = real2int(amount);
+returntxt = returntxt + ' ' + ones[numOfTenths];
+}
+
+
+
+
+
+
+
+if (numOfPennies >= 20)
+{
+numOfTenths = numOfPennies div 10;
+returntxt = returntxt + ' ' + 'Riyals'+ ' '+"@SYS5534" +' '+ tenths[numofTenths];
+numOfTenths = numOfTenths mod 10;
+numOfPennies = numOfPennies mod 10;
+checkStatus = true;
+}
+if (numOfPennies >= 1)
+{
+numOfTenths = real2int(numOfPennies);
+returntxt = checkStatus == true ? returntxt + ' ' + ones[numOfTenths] : returntxt + ' '+"@SYS5534" +' ' + ones[numOfTenths];
+checkStatus = true;
+}
+if (numOfPennies == 0 && !checkStatus)
+{
+returntxt = returntxt + ' ' + 'Riyals'+ ' ' + "@SYS5534"+' '+"@SYS2068" ;
+}
+
+
+
+
+
+
+
+return returntxt + ' ' + #paise;
+
+
+
+
+
+
+
+}

@@ -1,0 +1,54 @@
+public static void main(Args args)
+    {
+        Evs_SalesInvoiceControllerCopy    controller;
+        custinvoicejour  custinvoicejour,custinvicejourUpdate;
+        str   menuName;
+        ;
+        controller = new Evs_SalesInvoiceControllerCopy();
+
+        menuName = args.menuItemName();
+        controller.parmShowDialog(false);
+        switch (menuName)
+        {
+            case 'SalesInvoiceArabicOutputMenuItemCopy':
+                controller.parmReportName(ssrsReportStr(Evs_SalesInvoiceReport,Report));
+                break;
+
+
+
+            //change by EVS on Jan 12 2022, to run e invoice report
+            case 'Evs_SalesInvoiceArabicEInvoiceHF':
+                controller.parmReportName(ssrsReportStr(Evs_SalesInvoiceReport,PrecisionDesignHF));
+                break;
+
+            case 'Evs_SalesInvoiceArabicEInvoice':
+                controller.parmReportName(ssrsReportStr(Evs_SalesInvoiceReport,PrecisionDesign1));
+                break;
+
+
+            //default :
+            //    controller.parmReportName(ssrsReportStr(Evs_SalesInvoiceReportCustom,ReportAR));
+            //    break;
+
+        }
+
+        controller.parmDialogCaption("Invoice");
+        controller.parmArgs(args);
+        custinvoicejour = args.record();
+        controller.startOperation();
+        //if(custinvoicejour.Evs_Print == NoYes::No)
+        //{
+        //    update_recordset  custinvicejourUpdate setting Evs_Print = NoYes::Yes
+        //        where custinvicejourUpdate.RecId == custinvoicejour.RecId;
+        //    controller.startOperation();
+
+        //}
+        //else
+        //{
+        //    //controller.parmDialogCaption("Invoice Copy");
+        //    controller.startOperation();
+        //   // throw error("Original Previw Report already printed out... Kindly use Copy Preview");
+        //}
+    }
+
+}

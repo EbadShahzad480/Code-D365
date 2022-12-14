@@ -1,0 +1,60 @@
+class EVS_BI_InventProductionDateWiseViewTableClass
+{
+
+    public void FillEVS_BI_InventProductionDateWiseViewTable()
+    {
+
+        str sql;
+        Connection conn;
+        SqlStatementExecutePermission permission;
+
+        sql= " declare @Partition bigint ";
+        sql=sql + " select @Partition=PARTITION from DATAAREA where ID='KSA' ";
+
+        sql=sql + " Truncate table EVS_BI_InventProductionDateWiseViewTable ";
+        sql=sql + " insert into EVS_BI_InventProductionDateWiseViewTable(ITEMID,ITEMGROUPID,ITEMGROUPNAME,ITEMNAME,NAMEALIAS,INVENTSITEID,INVENTLOCATIONID,PRODUCTIONDATE,PRODUCTIONDAYS,QTY_PURPOSAL,QTY,ACTIVE_QTY, ";
+        sql=sql + " AMOUNT,QTY_TON,QTY_PURPOSAL_TON,PRODUCTIONNUMBER,BOTTOMSTRAPLENGTH,DATAFROM,ROWID,GOODQTY,NEWGUID,DATAAREAID,PARTITION,RECID,RECVERSION) ";
+
+        sql=sql + " Select  ITEMID,ITEMGROUPID,ITEMGROUPName,ItemName,NAMEALIAS,INVENTSITEID,INVENTLOCATIONID, k.ProductionDate,ProductionDays,QTY_Purposal,QTY,Active_QTY,Amount,QTY_Ton,QTY_Purposal_Ton, ";
+        sql=sql + " ProductionNumber,BottomStrapLength,DataFrom,RowId,isnull(Case when RowId=1 then QTYGOOD else 0 end,0) GoodQty  ,newid(), 'KSA',@Partition,ROW_NUMBER ( ) Over (order by itemid),1 ";
+        sql=sql + " from( ";
+        sql=sql + " Select ";
+        sql=sql + " iTrans.ITEMID, ";
+        sql=sql + " iiv.ITEMGROUPID, ";
+        sql=sql + " iiv.ITEMGROUPName, ";
+        sql=sql + " iiv.ItemName, ";
+        sql=sql + " iiv.NAMEALIAS, ";
+        sql=sql + " idim.INVENTSITEID, ";
+        sql=sql + " idim.INVENTLOCATIONID, ";
+        sql=sql + " iTrans.ProductionDate, ";
+        sql=sql + " iTrans.ProductionDays, ";
+        sql=sql + " iTrans.QTY_Purposal, ";
+        sql=sql + " iTrans.QTY, ";
+        sql=sql + " itrans.ActiveQtyNonDuplicate Active_QTY, ";
+        sql=sql + " iTrans.Amount, ";
+        sql=sql + " QTY_Ton=cast(iTrans.QTY/1000 as numeric(19,5)), ";
+        sql=sql + " QTY_Purposal_Ton=cast(iTrans.QTY_Purposal/1000 as numeric(19,5)), ";
+        sql=sql + " iTrans.DATAAREAID, ";
+        sql=sql + " iTrans.ProductionNumber, ";
+        sql=sql + " cast(cast(BottomStrapLength as int)as varchar(4)) BottomStrapLength ";
+        sql=sql + " ,DataFrom ";
+        sql=sql + " ,RowId=ROW_NUMBER() over(partition by iTrans.ProductionNumber order by iTrans.ProductionNumber ) ";
+        sql=sql + " from EVS_BI_Tab_InventProductionViewTable iTrans (nolock) ";
+  
+        sql=sql + " inner join INVENTDIM iDim (nolock) on iDim.INVENTDIMID = iTrans.INVENTDIMID and idim.DATAAREAID=itrans.DATAAREAID ";
+        sql=sql + " inner join EVS_BI_ITEMINFOTABLE iiv (nolock)  on iiv.ITEMID=iTrans.ITEMID and iiv.DATAAREAID=iTrans.DATAAREAID ";
+        sql=sql + " )k ";
+        sql=sql + " left join (select dataareaid,prodid,  cast(cast(POSTEDDATETIME as char(12)) as datetime) productiondate,sum(qtygood) qtygood from ProdJournalTable (nolock)pjt group by dataareaid,prodid, cast(cast(POSTEDDATETIME as char(12)) as datetime))pjt on pjt.PRODID ";
+        sql=sql + " =k.ProductionNumber and pjt.DATAAREAID=k.DATAAREAID ";
+        sql=sql + " and pjt.productiondate=k.ProductionDate ";
+
+        
+        conn = new Connection();
+        permission = new SqlStatementExecutePermission(sql);
+        permission.assert();
+        conn.createStatement().executeUpdate(sql);
+        
+        CodeAccessPermission::revertAssert();
+    }
+
+}

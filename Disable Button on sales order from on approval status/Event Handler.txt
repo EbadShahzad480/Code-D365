@@ -1,0 +1,31 @@
+//[FormDataSourceEventHandler(formDataSourceStr(SalesTable, SalesTable), FormDataSourceEventType::SelectionChanged)]
+    //public static void SalesTable_OnActivated(FormDataSource sender, FormDataSourceEventArgs e)
+    //{
+
+
+
+   //    SalesTable                     _SalesTable;
+    //    FormStringControl              _FormStringContro;
+
+
+
+   //    _SalesTable = sender.cursor() as SalesTable;
+
+
+
+   //    FormDataSource  salestable_ds       = sender.formRun().dataSource("SalesTable"); //DataSource
+    //    FormRun             element       = sender.formRun(); //form element
+    //    FormControl         Updatebutton   = element.design(0).controlName("buttonUpdateConfirm");
+
+
+
+   //    Updatebutton.enabled(false);
+    //    if(_SalesTable.Evs_SalesOrderApproval == Evs_SalesApproval::Approved)
+    //    {
+    //        Updatebutton.enabled(true);
+    //    }
+    //    else
+    //    {
+    //        Updatebutton.enabled(false);
+    //    }
+    //}

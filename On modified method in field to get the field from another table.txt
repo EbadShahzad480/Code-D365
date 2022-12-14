@@ -1,0 +1,30 @@
+class Evs_InventjournalExpDate
+{
+
+
+
+   
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    [FormControlEventHandler(formControlStr(InventJournalMovement, InventoryDimensionsGrid_inventBatchId), FormControlEventType::Modified)]
+    public static void InventoryDimensionsGrid_inventBatchId_OnModified(FormControl sender, FormControlEventArgs e)
+    {
+        InventBatch         _InventBatch;
+        InventJournalTrans  _InventJournalTrans;
+
+
+
+       _InventJournalTrans  = sender.formRun().dataSource(formDataSourceStr(InventJournalMovement,InventJournalTrans)).cursor();
+
+
+
+       select * from _InventBatch where _InventBatch.inventBatchId == sender.valueStr();
+        _InventJournalTrans.expDate = _InventBatch.expDate;
+    }
+
+
+
+}

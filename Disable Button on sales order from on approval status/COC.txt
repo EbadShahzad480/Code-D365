@@ -1,0 +1,48 @@
+[ExtensionOf(formDataSourceStr(SalesTableListPage, SalesTable))]
+final class Evs_SalesOrder_Extension
+{
+    void init()
+    {
+        SalesTable _SalesTable;
+        next init();
+        _SalesTable = this.cursor();
+
+
+
+       FormControl Updatebutton = this.formRun().design(0).controlName("buttonUpdateConfirm");
+        
+        Updatebutton.enabled(false);
+
+
+
+       if(_SalesTable.Evs_SalesOrderApproval == Evs_SalesApproval::Approved)
+        {
+            Updatebutton.enabled(true);
+        }
+    }
+
+
+
+   int active()
+    {
+        SalesTable _SalesTable;
+        return next active();
+        _SalesTable = this.cursor();
+
+
+
+       FormControl Updatebutton = this.formRun().design(0).controlName("buttonUpdateConfirm");
+        
+        Updatebutton.enabled(false);
+
+
+
+       if(_SalesTable.Evs_SalesOrderApproval == Evs_SalesApproval::Approved)
+        {
+            Updatebutton.enabled(true);
+        }
+    }
+
+
+
+}

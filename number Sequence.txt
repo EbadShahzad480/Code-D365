@@ -1,0 +1,26 @@
+// create a class
+class Dev_GenerateNumberSeq
+{
+    public str 60 GenerateNextNumberSeq(str 60 _Code)
+    {
+        str 100 strNumberSequenceName;
+        if(_Code!="")
+        {
+            strNumberSequenceName=NumberSeq::newGetNumFromCode(
+                _Code, 
+                NumberSeqScopeFactory::createDefaultScope(), 
+                true,
+                true,
+                null,
+                true
+                ).num();
+        }
+
+        return strNumberSequenceName;
+    }
+
+}
+
+//calling a class with method
+dev_GenerateNumberSeq   objdev_GenerateNumberSeq= new dev_GenerateNumberSeq();
+                _Evs_PalletMaster.PalletId=objdev_GenerateNumberSeq.GenerateNextNumberSeq("Pallets");

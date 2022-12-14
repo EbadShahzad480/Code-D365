@@ -1,0 +1,102 @@
+class EVS_BI_ProductionDataClass
+{       
+    [SysEntryPointAttribute(false)]    
+    public void processRecords()
+    {
+        EVS_TAB_PowerBI_RunJobsSetup _EVS_TAB_PowerBI_RunJobsSetup;
+
+        Info(strFmt('%1','Evs Prower BI Production Data is refresh...begin'));
+
+        //pre fill local data
+        EVS_BI_Tab_InventProductionViewTableClass _EVS_BI_Tab_InventProductionViewTableClass=new EVS_BI_Tab_InventProductionViewTableClass();
+        _EVS_BI_Tab_InventProductionViewTableClass.FillEVS_BI_Tab_InventProductionViewTable();
+        Info(strFmt('%1','Evs Prower BI Production, it is local table clase..EVS_BI_Tab_InventProductionViewTableClass..end'));
+
+
+        select * from _EVS_TAB_PowerBI_RunJobsSetup where _EVS_TAB_PowerBI_RunJobsSetup.BI_DashBoard=="Production"
+            && _EVS_TAB_PowerBI_RunJobsSetup.JobName=="EVS_BI_GoodQuantityDateWiseViewTableClass"
+            && _EVS_TAB_PowerBI_RunJobsSetup.IsEnable==NoYes::Yes;
+
+        if(_EVS_TAB_PowerBI_RunJobsSetup)
+        {
+            //ES
+            EVS_BI_GoodQuantityDateWiseViewTableClass _EVS_BI_GoodQuantityDateWiseViewTableClass=new EVS_BI_GoodQuantityDateWiseViewTableClass();
+            _EVS_BI_GoodQuantityDateWiseViewTableClass.FillEVS_BI_GoodQuantityDateWiseViewTable(); 
+            Info(strFmt('%1','Evs Prower BI Production..EVS_BI_GoodQuantityDateWiseViewTableClass..end'));
+        }
+        //*******************************
+
+        select * from _EVS_TAB_PowerBI_RunJobsSetup where _EVS_TAB_PowerBI_RunJobsSetup.BI_DashBoard=="Production"
+            && _EVS_TAB_PowerBI_RunJobsSetup.JobName=="EVS_BI_InventProductionDateWiseViewTableClass"
+            && _EVS_TAB_PowerBI_RunJobsSetup.IsEnable==NoYes::Yes;
+
+        if(_EVS_TAB_PowerBI_RunJobsSetup)
+        {
+            //ES
+            EVS_BI_InventProductionDateWiseViewTableClass _EVS_BI_InventProductionDateWiseViewTableClass=new EVS_BI_InventProductionDateWiseViewTableClass();
+            _EVS_BI_InventProductionDateWiseViewTableClass.FillEVS_BI_InventProductionDateWiseViewTable();
+            Info(strFmt('%1','Evs Prower BI Production..EVS_BI_InventProductionDateWiseViewTableClass..end'));
+        }
+        //*******************************
+
+        select * from _EVS_TAB_PowerBI_RunJobsSetup where _EVS_TAB_PowerBI_RunJobsSetup.BI_DashBoard=="Production"
+            && _EVS_TAB_PowerBI_RunJobsSetup.JobName=="EVS_BI_InventTransferOrdersDateWiseView_ReportTableClass"
+            && _EVS_TAB_PowerBI_RunJobsSetup.IsEnable==NoYes::Yes;
+
+        if(_EVS_TAB_PowerBI_RunJobsSetup)
+        {
+            //ES
+            EVS_BI_InventTransferOrdersDateWiseView_ReportTableClass _EVS_BI_InventTransferOrdersDateWiseView_ReportTableClass=new EVS_BI_InventTransferOrdersDateWiseView_ReportTableClass();
+            _EVS_BI_InventTransferOrdersDateWiseView_ReportTableClass.FillEVS_BI_InventTransferOrdersDateWiseView_ReportTable();
+            Info(strFmt('%1','Evs Prower BI Production..EVS_BI_InventTransferOrdersDateWiseView_ReportTableClass..end'));
+        }
+        //*******************************
+
+        select * from _EVS_TAB_PowerBI_RunJobsSetup where _EVS_TAB_PowerBI_RunJobsSetup.BI_DashBoard=="Production"
+            && _EVS_TAB_PowerBI_RunJobsSetup.JobName=="EVS_BI_ManPowerAndProdHrsViewTableClass"
+            && _EVS_TAB_PowerBI_RunJobsSetup.IsEnable==NoYes::Yes;
+
+        if(_EVS_TAB_PowerBI_RunJobsSetup)
+        {
+            //ES
+            EVS_BI_ManPowerAndProdHrsViewTableClass _EVS_BI_ManPowerAndProdHrsViewTableClass=new EVS_BI_ManPowerAndProdHrsViewTableClass();
+            _EVS_BI_ManPowerAndProdHrsViewTableClass.FillEVS_BI_ManPowerAndProdHrsViewTable();
+            Info(strFmt('%1','Evs Prower BI Production..EVS_BI_ManPowerAndProdHrsViewTableClass..end'));
+        }
+        //*******************************
+
+        select * from _EVS_TAB_PowerBI_RunJobsSetup where _EVS_TAB_PowerBI_RunJobsSetup.BI_DashBoard=="Production"
+            && _EVS_TAB_PowerBI_RunJobsSetup.JobName=="EVS_BI_ProductionPageViewTableClass"
+            && _EVS_TAB_PowerBI_RunJobsSetup.IsEnable==NoYes::Yes;
+
+        if(_EVS_TAB_PowerBI_RunJobsSetup)
+        {
+            //ES
+            EVS_BI_ProductionPageViewTableClass _EVS_BI_ProductionPageViewTableClass=new EVS_BI_ProductionPageViewTableClass();
+            _EVS_BI_ProductionPageViewTableClass.FillEVS_BI_ProductionPageViewTable();
+            Info(strFmt('%1','Evs Prower BI Production..EVS_BI_ProductionPageViewTableClass..end'));
+        }
+        //*******************************
+
+        select * from _EVS_TAB_PowerBI_RunJobsSetup where _EVS_TAB_PowerBI_RunJobsSetup.BI_DashBoard=="Production"
+            && _EVS_TAB_PowerBI_RunJobsSetup.JobName=="EVS_BI_SalesOrdersDateWiseViewTableClass"
+            && _EVS_TAB_PowerBI_RunJobsSetup.IsEnable==NoYes::Yes;
+
+        if(_EVS_TAB_PowerBI_RunJobsSetup)
+        {
+            //ES
+            EVS_BI_SalesOrdersDateWiseViewTableClass _EVS_BI_SalesOrdersDateWiseViewTableClass=new EVS_BI_SalesOrdersDateWiseViewTableClass();
+            _EVS_BI_SalesOrdersDateWiseViewTableClass.FillEVS_BI_SalesOrdersDateWiseViewTable();
+            Info(strFmt('%1','Evs Prower BI Production..EVS_BI_SalesOrdersDateWiseViewTableClass..end'));
+        }
+        //*******************************
+
+        EVS_BI_ProductCostingClass _EVS_BI_ProductCostingClass=new EVS_BI_ProductCostingClass();
+        _EVS_BI_ProductCostingClass.getProductCostingData();
+
+        Info(strFmt('%1','Evs Prower BI Production.._EVS_BI_ProductCostingClass..end'));
+
+        Info(strFmt('%1','Evs Prower BI Production Data is refresh...end'));
+    }
+
+}
