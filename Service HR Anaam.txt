@@ -1,0 +1,699 @@
+class Evs_AttendanceIntegration_DP
+{
+    //public str GetAllEmployees()
+    //{
+    //    HcmWorker       _HcmWorker;
+    //    DirPersonName   _DirPersonName;
+    //    Evs_GetAllWorker_Contract HcmWorkerContract = new Evs_GetAllWorker_Contract();
+
+
+
+    //    List personnelNumberList = new List(Types::AnyType);
+    //    List fistNameList = new List(Types::AnyType);
+    //    List middleNameList = new List(Types::AnyType);
+    //    List lastNameList = new List(Types::AnyType);
+
+
+
+    //    try
+    //    {
+    //        ttsbegin;
+    //        while select * from _HcmWorker
+    //        {
+    //            select * from _DirPersonName where _DirPersonName.Person == _HcmWorker.Person;
+
+
+
+    //            personnelNumberList.addEnd(_HcmWorker.PersonnelNumber);
+    //            fistNameList.addEnd(_DirPersonName.FirstName);
+    //            lastNameList.addEnd(_DirPersonName.LastName);
+    //            middleNameList.addEnd(_DirPersonName.MiddleName);
+    //        }
+
+
+
+    //        if(personnelNumberList)
+    //        {
+    //            HcmWorkerContract.parmPersonnelNumber(personnelNumberList);
+    //            HcmWorkerContract.parmFirstName(fistNameList);
+    //            HcmWorkerContract.parmLastName(lastNameList);
+    //            HcmWorkerContract.parmMiddleName(middleNameList);
+    //        }
+    //        else
+    //        {
+    //            personnelNumberList.addEnd("No Record Found");
+    //            fistNameList.addEnd("No Record Found");
+    //            lastNameList.addEnd("No Record Found");
+    //            middleNameList.addEnd("No Record Found");
+    //            HcmWorkerContract.parmPersonnelNumber(personnelNumberList);
+    //            HcmWorkerContract.parmFirstName(fistNameList);
+    //            HcmWorkerContract.parmLastName(lastNameList);
+    //            HcmWorkerContract.parmMiddleName(middleNameList);
+    //        }
+    //        ttscommit;
+    //    }
+    //    catch
+    //    {
+    //        personnelNumberList.addEnd(infolog.text());
+    //        fistNameList.addEnd(infolog.text());
+    //        lastNameList.addEnd(infolog.text());
+    //        middleNameList.addEnd(infolog.text());
+    //        HcmWorkerContract.parmPersonnelNumber(personnelNumberList);
+    //        HcmWorkerContract.parmFirstName(fistNameList);
+    //        HcmWorkerContract.parmLastName(lastNameList);
+    //        HcmWorkerContract.parmMiddleName(middleNameList);
+    //    }
+
+
+
+    //    str serializeJSON = FormJsonSerializer::serializeClass(HcmWorkerContract);
+
+
+
+    //    return serializeJSON;
+    //}
+
+
+
+    utcdatetime last;
+
+
+
+
+
+
+    public str GetAllEmployees()
+    {
+        HcmWorker       _HcmWorker;
+        DirPersonName   _DirPersonName;
+        System.Collections.ArrayList Array1 = new System.Collections.ArrayList();
+        try
+        {
+            while select * from _HcmWorker
+            {
+                select * from _DirPersonName where _DirPersonName.Person == _HcmWorker.Person;
+              
+                eHCM_Helper.Models.EmployeeShort  EmployeeShort =new eHCM_Helper.Models.EmployeeShort();
+
+
+
+                EmployeeShort.EmployeeID=_HcmWorker.PersonnelNumber;
+                EmployeeShort.FirstName = _DirPersonName.FirstName;
+                EmployeeShort.LastName = _DirPersonName.LastName;
+                EmployeeShort.MiddleName = _DirPersonName.MiddleName;
+                
+                //EmployeeShort.FirstName=_HcmWorker.;
+                Array1.Add(EmployeeShort);
+            }
+
+
+
+        }
+        catch (Exception::CLRError)
+        {
+            System.Exception interopException = CLRInterop::getLastException();
+
+
+
+            //response.parmSuccess(false);
+            //response.parmErrorMessage(interopException.ToString());
+        }
+        str currentnode = Newtonsoft.Json.JsonConvert::SerializeObject(Array1,Newtonsoft.Json.Formatting::Indented);
+        //str serializeJSON = FormJsonSerializer::serializeClass(Array1);
+        return currentnode;
+
+
+
+    }
+
+
+
+    public str GetConfiguration(str companyid)
+    {
+        HRConfiguration _HRConfiguration;
+        eHCM_Helper.Models.HR_Configuration  hrconfig =new eHCM_Helper.Models.HR_Configuration();
+        try
+        {
+            select * from _HRConfiguration;
+            
+            if(_HRConfiguration)
+            {
+                hrconfig.EOT=_HRConfiguration.EOT;
+                hrconfig.FlexibleShiftHours = _HRConfiguration.FlexibleShiftHours;
+                hrconfig.CalculateOvertimeHoliday=_HRConfiguration.CalculateOvertimeHoliday;
+            }
+            else
+            {
+                hrconfig=null;
+            }
+        }
+        catch (Exception::CLRError)
+        {
+            System.Exception interopException = CLRInterop::getLastException();
+        }
+        str currentnode = Newtonsoft.Json.JsonConvert::SerializeObject(hrconfig,Newtonsoft.Json.Formatting::Indented);
+        return currentnode;
+    }
+
+
+
+    public str GetEmployee(str Workerid)
+    {
+
+
+
+        //str             _WorkerId;
+        HcmWorker       _HcmWorker;
+        DirPersonName   _DirPersonName;
+        HcmEmployment   _HcmEmployment;
+        eHCM_Helper.Models.Employee  employee =new eHCM_Helper.Models.Employee();
+        //Evs_GetEmployee_Contract getJson = FormJsonSerializer::deserializeObject(classNum(Evs_GetEmployee_Contract), Workerid);
+       
+        //_WorkerId = getJson.parmEmployee();
+        try
+        {
+          
+            select * from _HcmWorker where _HcmWorker.PersonnelNumber==Workerid;
+            select * from _DirPersonName where _DirPersonName.Person == _HcmWorker.Person;
+            select * from _HcmEmployment where _HcmEmployment.Worker==_HcmWorker.RecId;
+            employee.AccountNumber=_HcmWorker.PersonnelNumber;
+            employee.ShiftID = _HcmWorker.Evs_ShiftCode;
+            employee.FirstName = _DirPersonName.FirstName;
+            employee.LastName = _DirPersonName.LastName;
+            employee.MiddleName = _DirPersonName.MiddleName;
+            employee.HireDate = _HcmEmployment.ValidFrom;
+           
+
+
+
+        }
+        catch (Exception::CLRError)
+        {
+            System.Exception interopException = CLRInterop::getLastException();
+
+
+
+            //response.parmSuccess(false);
+            //response.parmErrorMessage(interopException.ToString());
+        }
+        str currentnode = Newtonsoft.Json.JsonConvert::SerializeObject(employee,Newtonsoft.Json.Formatting::Indented);
+        //str serializeJSON = FormJsonSerializer::serializeClass(Array1);
+        return currentnode;
+
+
+
+    }
+
+
+
+    public void saveFingurePrintDataImportHistory(str jsonEmployeeId)
+    {
+        str _employeeId;
+        utcdatetime _lastImportDate;
+        FingurePrintDataImportHistory   _FingurePrintDataImportHistory;
+        Evs_FingurePrintDataImportHistory_Contract LastImportcontract = new Evs_FingurePrintDataImportHistory_Contract();
+        Evs_FingurePrintDataImportHistory_Contract getJson = FormJsonSerializer::deserializeObject(classNum(Evs_FingurePrintDataImportHistory_Contract), jsonEmployeeId);
+
+
+
+        _employeeId = getJson.parmEmployeeId();
+        _lastImportDate = getJson.parmLastImportDate();
+
+
+
+        select * from _FingurePrintDataImportHistory where _FingurePrintDataImportHistory.EmployeeID == _employeeId;
+        if(_FingurePrintDataImportHistory)
+        {
+            ttsbegin;
+            _FingurePrintDataImportHistory.selectForUpdate(true);
+            _FingurePrintDataImportHistory.LastImportDate = _lastImportDate;
+            _FingurePrintDataImportHistory.update();
+            ttscommit;
+        }
+        else
+        {
+            _FingurePrintDataImportHistory.EmployeeID = _employeeId;
+            _FingurePrintDataImportHistory.LastImportDate = _lastImportDate;
+            _FingurePrintDataImportHistory.insert();
+        }
+    }
+
+
+
+    //public str getFingurePrintDataLastImportDate(str jsonEmployeeId)
+    //{
+    //    str _employeeId;
+    //    utcdatetime _lastImportDate;
+    //    FingurePrintDataImportHistory   _FingurePrintDataImportHistory;
+    //    Evs_LastImportDate_Contract LastImportcontract = new Evs_LastImportDate_Contract();
+    //    Evs_GetEmployee_Contract    getJson = FormJsonSerializer::deserializeObject(classNum(Evs_GetEmployee_Contract), jsonEmployeeId);
+
+
+
+    //    _employeeId = getJson.parmEmployeeId();
+
+
+
+    //    select * from _FingurePrintDataImportHistory where _FingurePrintDataImportHistory.EmployeeID == _employeeId;
+    //    if(_FingurePrintDataImportHistory)
+    //    {
+    //        _lastImportDate = _FingurePrintDataImportHistory.LastImportDate;
+    //    }
+
+
+
+    //    if(_lastImportDate)
+    //    {
+    //        LastImportcontract.parmLastImportDate(_lastImportDate);
+    //    }
+
+
+
+    //    str serializeJSON = FormJsonSerializer::serializeClass(LastImportcontract);
+
+
+
+    //    return serializeJSON;
+    //}
+
+
+
+    public str getFingurePrintDataLastImportDate(str EmployeeId)
+    {
+
+
+
+
+
+
+        FingurePrintDataImportHistory   _FingurePrintDataImportHistory;
+        eHCM_Helper.Models.FingerPrintDataImportHistory _FingurePrintDataImportHistoryModel = new eHCM_Helper.Models.FingerPrintDataImportHistory();
+
+
+
+
+        try
+        {
+            select * from _FingurePrintDataImportHistory where _FingurePrintDataImportHistory.EmployeeID == EmployeeId;
+            if(_FingurePrintDataImportHistory)
+            {
+                _FingurePrintDataImportHistoryModel.EmployeeID=_FingurePrintDataImportHistory.EmployeeID;
+                _FingurePrintDataImportHistoryModel.LastImportDate=_FingurePrintDataImportHistory.LastImportDate;
+
+
+
+            }
+            else
+            {
+                _FingurePrintDataImportHistoryModel=null;
+            }
+            //_FingurePrintDataImportHistoryModel.AttendanceType = _Evs_Attendance.AttendanceType;
+
+
+
+            //Attendance.CheckIn = obj.stringTimeToTimeStamp(any2Str(_Evs_Attendance.checkin));
+            //Attendance.CheckOut = obj.stringTimeToTimeStamp(any2Str(_Evs_Attendance.CheckOut));
+            //Attendance.DelayTime = obj.stringTimeToTimeStamp(any2Str(_Evs_Attendance.Delaytime));
+            //Attendance.OverTime = obj.stringTimeToTimeStamp(any2Str(_Evs_Attendance.Overtime));
+            //Attendance.PersonalExit = obj.stringTimeToTimeStamp(any2Str(_Evs_Attendance.Personalexit));
+            //Attendance.TotalHours = _Evs_Attendance.Totalhours;
+
+
+
+
+
+        }
+        catch (Exception::CLRError)
+        {
+            System.Exception interopException = CLRInterop::getLastException();
+        }
+
+
+
+        str currentnode = Newtonsoft.Json.JsonConvert::SerializeObject(_FingurePrintDataImportHistoryModel,Newtonsoft.Json.Formatting::Indented);
+        return currentnode;
+
+
+
+    }
+
+
+
+    public str getAttendance(str EmployeeId,utcdatetime LastImportDate)
+    {
+        str         _employeeId,_sql,_employeeSelected,_checkIn,_checkOut;
+        utcdatetime _lastImportDate;
+        date        _AttendanceDate;
+        DataAreaId  _companyid;
+        System.Collections.ArrayList Array1 = new System.Collections.ArrayList();
+        //Evs_FingurePrintDataImportHistory_Contract getJson = FormJsonSerializer::deserializeObject(classNum(Evs_FingurePrintDataImportHistory_Contract), jsonEmployeeId);
+
+
+
+        //_employeeId = getJson.parmEmployeeId();
+        //_lastImportDate = getJson.parmLastImportDate();
+        _employeeId = EmployeeId;
+        _lastImportDate = LastImportDate;
+
+
+
+        try
+        {
+            eHCM_Helper.Models.Attendance Attendance = new eHCM_Helper.Models.Attendance();
+
+
+
+            Connection  Con = new Connection();
+            Statement   Stmt = Con.createStatement();
+            _companyid = curExt();
+                    
+            _sql = " DECLARE @EmployeeID AS VARCHAR(50) = '"+_employeeId+"' ";
+            _sql += " DECLARE @FromDate DATETIME = '"+any2Str(_lastImportDate)+"' ";
+            _sql += " DECLARE @ToDate DATETIME = CONVERT(VARCHAR, GETDATE(), 23) ";
+            _sql += " IF (@FromDate > @ToDate) ";
+            _sql += " SET @ToDate = CONVERT(VARCHAR, GETDATE(), 23) ";
+            _sql += " DECLARE @TotalCount INT ";
+            _sql += " SET @FromDate = DATEADD(DAY, -1, @FromDate) ";
+            _sql += " SELECT @TotalCount= DATEDIFF(DD, @FromDate, @ToDate); ";
+            _sql += " WITH d AS ";
+            _sql += " ( ";
+            _sql += " SELECT TOP (@TotalCount) AllDays = DATEADD(DAY, (ROW_NUMBER() OVER (ORDER BY OBJECT_ID)), @FromDate) ";
+            _sql += " FROM sys.all_objects ";
+            _sql += " ) ";
+            _sql += " SELECT ";
+            _sql += " a.EmployeeID, a.AttendanceDate, ";
+            _sql += " ( ";
+            _sql += " SELECT CONVERT(TIME(7), MIN(CONVERT(TIME(7), punch_time))) ";
+            _sql += " FROM Evs_iclock_transaction iclock_transaction ";
+            _sql += " WHERE (iclock_transaction.punch_state = '0') ";
+            _sql += " AND iclock_transaction.emp_code = @EmployeeID ";
+            _sql += " AND CONVERT(VARCHAR, punch_time, 23) = a.C_Date ";
+            _sql += " ) AS CheckIn, ";
+            _sql += " ( ";
+            _sql += " CASE ";
+            _sql += " WHEN ";
+            _sql += " (SELECT CONVERT(TIME(7), MIN(CONVERT(TIME(7), punch_time))) ";
+            _sql += " FROM Evs_iclock_transaction iclock_transaction ";
+            _sql += " WHERE (iclock_transaction.punch_state = '0') ";
+            _sql += " AND iclock_transaction.emp_code = @EmployeeID ";
+            _sql += " AND CONVERT(VARCHAR, punch_time, 23) = a.C_Date) > '15:30:00' ";
+            _sql += " THEN ";
+            _sql += " (SELECT CONVERT(TIME(7), MAX(CONVERT(TIME(7), punch_time))) ";
+            _sql += " FROM Evs_iclock_transaction iclock_transaction ";
+            _sql += " WHERE (iclock_transaction.punch_state = '1') ";
+            _sql += " AND iclock_transaction.emp_code = @EmployeeID ";
+            _sql += " AND CONVERT(VARCHAR, punch_time, 23) = CONVERT(VARCHAR, DATEADD(DAY, 1, a.C_Date), 23)) ";
+            _sql += " WHEN ";
+            _sql += " (SELECT CONVERT(TIME(7), MIN(CONVERT(TIME(7), punch_time))) ";
+            _sql += " FROM Evs_iclock_transaction iclock_transaction ";
+            _sql += " WHERE (iclock_transaction.punch_state = '0') ";
+            _sql += " AND iclock_transaction.emp_code = @EmployeeID ";
+            _sql += " AND CONVERT(VARCHAR, punch_time, 23) = a.C_Date) < '15:30:00' ";
+            _sql += " THEN ";
+            _sql += " (SELECT CONVERT(TIME(7), MAX(CONVERT(TIME(7), punch_time))) ";
+            _sql += " FROM Evs_iclock_transaction iclock_transaction ";
+            _sql += " WHERE (iclock_transaction.punch_state = '1')  ";
+            _sql += " AND iclock_transaction.emp_code = @EmployeeID ";
+            _sql += " AND CONVERT(VARCHAR, punch_time, 23) = a.C_Date) ";
+            _sql += " WHEN ";
+            _sql += " (SELECT CONVERT(TIME(7), MAX(CONVERT(TIME(7), punch_time))) ";
+            _sql += " FROM Evs_iclock_transaction iclock_transaction ";
+            _sql += " WHERE (iclock_transaction.punch_state = '1') ";
+            _sql += " AND iclock_transaction.emp_code = @EmployeeID ";
+            _sql += " AND CONVERT(VARCHAR, punch_time, 23) = CONVERT(VARCHAR, DATEADD(DAY, 1, a.C_Date), 23)) BETWEEN '00:00:00' AND '15:30:00' ";
+            _sql += " THEN ";
+            _sql += " (SELECT CONVERT(TIME(7), MAX(CONVERT(TIME(7), punch_time))) ";
+            _sql += " FROM Evs_iclock_transaction iclock_transaction ";
+            _sql += " WHERE (iclock_transaction.punch_state = '1') ";
+            _sql += " AND iclock_transaction.emp_code = @EmployeeID ";
+            _sql += " AND CONVERT(VARCHAR, punch_time, 23) = CONVERT(VARCHAR, DATEADD(DAY, 1, a.C_Date), 23)) ";
+            _sql += " WHEN ";
+            _sql += " (SELECT CONVERT(TIME(7), MAX(CONVERT(TIME(7), punch_time))) ";
+            _sql += " FROM Evs_iclock_transaction iclock_transaction ";
+            _sql += " WHERE (iclock_transaction.punch_state = '1') ";
+            _sql += " AND iclock_transaction.emp_code = @EmployeeID ";
+            _sql += " AND CONVERT(VARCHAR, punch_time, 23) = a.C_Date) > '15:30:00' ";
+            _sql += " THEN ";
+            _sql += " (SELECT CONVERT(TIME(7), MAX(CONVERT(TIME(7), punch_time))) ";
+            _sql += " FROM Evs_iclock_transaction iclock_transaction ";
+            _sql += " WHERE (iclock_transaction.punch_state = '1') ";
+            _sql += " AND iclock_transaction.emp_code = @EmployeeID ";
+            _sql += " AND CONVERT(VARCHAR, punch_time, 23) = a.C_Date) ";
+            _sql += " WHEN ";
+            _sql += " (SELECT CONVERT(TIME(7), MAX(CONVERT(TIME(7), punch_time))) ";
+            _sql += " FROM Evs_iclock_transaction iclock_transaction ";
+            _sql += " WHERE (iclock_transaction.punch_state = '1') ";
+            _sql += " AND iclock_transaction.emp_code = @EmployeeID ";
+            _sql += " AND CONVERT(VARCHAR, punch_time, 23) = a.C_Date) IS NULL ";
+            _sql += " THEN ";
+            _sql += " (SELECT CONVERT(TIME(7), MIN(CONVERT(TIME(7), punch_time))) ";
+            _sql += " FROM Evs_iclock_transaction iclock_transaction ";
+            _sql += " WHERE (iclock_transaction.punch_state = '1') ";
+            _sql += " AND iclock_transaction.emp_code = @EmployeeID ";
+            _sql += " AND CONVERT(VARCHAR, punch_time, 23) = CONVERT(VARCHAR, DATEADD(DAY, 1, a.C_Date), 23)) ";
+            _sql += " ELSE ";
+            _sql += " NULL ";
+            _sql += " END ";
+            _sql += " ) AS CheckOut ";
+            _sql += " FROM ";
+            _sql += " ( ";
+            _sql += " SELECT DISTINCT d.AllDays AS AttendanceDate, ";
+            _sql += " @EmployeeID AS EmployeeID, ";
+            _sql += " CONVERT(VARCHAR, punch_time, 23) AS C_Date, ";
+            _sql += " CONVERT(TIME(7), punch_time) AS C_Time ";
+            _sql += " FROM d ";
+            _sql += " LEFT OUTER JOIN  EVS_ICLOCK_TRANSACTION en ON en.emp_code = @EmployeeID  ";
+            _sql += " AND CONVERT(VARCHAR, en.punch_time, 23) = d.AllDays ";
+            _sql += " GROUP BY d.AllDays, en.emp_code, CONVERT(VARCHAR, en.punch_time, 23), CONVERT(TIME(7), en.punch_time) ";
+            _sql += " ) a ";
+            _sql += " WHERE EXISTS (SELECT emp_code FROM EVS_ICLOCK_TRANSACTION iclock_transaction WHERE emp_code = @EmployeeID) ";
+            _sql += " GROUP BY a.C_Date, a.AttendanceDate, a.EmployeeID ";
+            _sql += " ORDER BY a.AttendanceDate ";
+
+
+
+            ResultSet R = Stmt.executeQuery(_sql);
+            eHCM_Helper.BusinessLogics.AttendanceModule obj=new  eHCM_Helper.BusinessLogics.AttendanceModule();
+
+
+
+            while (R.next())
+            {
+                _employeeSelected = R.getString(1);
+                _AttendanceDate = any2Date(R.getString(2));
+                _checkIn = R.getString(3);
+                _checkOut = R.getString(4);
+                Attendance.EmployeeID = _employeeSelected;
+                Attendance.AttendanceDate = _AttendanceDate;
+                Attendance.CheckIn = obj.stringTimeToTimeStamp(_checkIn);
+                Attendance.CheckOut = obj.stringTimeToTimeStamp(_checkOut);
+
+
+
+                //Attendance.
+                Array1.Add(Attendance);
+            }
+        }
+        catch (Exception::CLRError)
+        {
+            System.Exception interopException = CLRInterop::getLastException();
+        }
+
+
+
+        str currentnode = Newtonsoft.Json.JsonConvert::SerializeObject(Array1,Newtonsoft.Json.Formatting::Indented);
+        //str serializeJSON = FormJsonSerializer::serializeClass(Array1);
+        return currentnode;
+    }
+
+
+
+    public str GetAttan(str EmployeeId,utcdatetime LastImportDate)
+    {
+
+
+
+
+
+
+        Evs_Attendance _Evs_Attendance;
+        eHCM_Helper.Models.Attendance Attendance = new eHCM_Helper.Models.Attendance();
+        eHCM_Helper.BusinessLogics.AttendanceModule obj=new  eHCM_Helper.BusinessLogics.AttendanceModule();
+
+
+
+       
+        try
+        {
+            select * from _Evs_Attendance where _Evs_Attendance.EmployeeID == EmployeeId
+                &&  DateTimeUtil::date(_Evs_Attendance.AttendanceDate) ==  DateTimeUtil::date(LastImportDate);
+
+
+
+            Attendance.AttendanceType = _Evs_Attendance.AttendanceType;
+            Attendance.CheckIn = obj.stringTimeToTimeStamp(any2Str(_Evs_Attendance.checkin));
+            Attendance.CheckOut = obj.stringTimeToTimeStamp(any2Str(_Evs_Attendance.CheckOut));
+            Attendance.DelayTime = obj.stringTimeToTimeStamp(any2Str(_Evs_Attendance.Delaytime));
+            Attendance.OverTime = obj.stringTimeToTimeStamp(any2Str(_Evs_Attendance.Overtime));
+            Attendance.PersonalExit = obj.stringTimeToTimeStamp(any2Str(_Evs_Attendance.Personalexit));
+            Attendance.TotalHours = _Evs_Attendance.Totalhours;
+            
+            
+
+
+
+        }
+        catch (Exception::CLRError)
+        {
+            System.Exception interopException = CLRInterop::getLastException();
+        }
+
+
+
+        str currentnode = Newtonsoft.Json.JsonConvert::SerializeObject(Attendance,Newtonsoft.Json.Formatting::Indented);
+        return currentnode;
+
+
+
+    }
+
+
+
+    public str GetShiftGroup(str GroupId)
+    {
+
+
+
+
+
+
+        Evs_RosterShiftGroup _Evs_RosterShiftGroup;
+        eHCM_Helper.Models.Roster_ShiftGroup Roster_ShiftGroup = new eHCM_Helper.Models.Roster_ShiftGroup();
+       
+
+
+
+        
+        try
+        {
+            select * from _Evs_RosterShiftGroup where _Evs_RosterShiftGroup.GroupId == GroupId;
+
+
+
+            Roster_ShiftGroup.GroupID = GroupId;
+            Roster_ShiftGroup.GroupName = _Evs_RosterShiftGroup.GroupName;
+            Roster_ShiftGroup.MondayOff = _Evs_RosterShiftGroup.MondayOff;
+            Roster_ShiftGroup.TuesdayOff = _Evs_RosterShiftGroup.TuesdayOff;
+            Roster_ShiftGroup.WednesdayOff = _Evs_RosterShiftGroup.WednesdayOff;
+            Roster_ShiftGroup.ThursdayOff = _Evs_RosterShiftGroup.ThursdayOff;
+            Roster_ShiftGroup.FridayOff = _Evs_RosterShiftGroup.FridayOff;
+            Roster_ShiftGroup.SaturdayOff = _Evs_RosterShiftGroup.SaturdayOff;
+            Roster_ShiftGroup.SundayOff = _Evs_RosterShiftGroup.SundayOff;
+            
+     
+            
+
+
+
+        }
+        catch (Exception::CLRError)
+        {
+            System.Exception interopException = CLRInterop::getLastException();
+        }
+
+
+
+        str currentnode = Newtonsoft.Json.JsonConvert::SerializeObject(Roster_ShiftGroup,Newtonsoft.Json.Formatting::Indented);
+        return currentnode;
+
+
+
+    }
+
+
+
+    public str RosterOffDayCategory(str EmployeeID)
+    {
+
+
+
+        Evs_Roster_WorkingDays _Evs_Roster_WorkingDays;
+        eHCM_Helper.Models.Roster_WorkingDays Roster_WorkingDays = new eHCM_Helper.Models.Roster_WorkingDays();
+
+
+
+        try
+        {
+            select * from _Evs_Roster_WorkingDays where _Evs_Roster_WorkingDays.EmployeeID == EmployeeID;
+
+
+
+            _Evs_Roster_WorkingDays.RosterWorkingDaysID =
+
+
+
+        }
+        catch (Exception::CLRError)
+        {
+            System.Exception interopException = CLRInterop::getLastException();
+        }
+
+
+
+        str currentnode = Newtonsoft.Json.JsonConvert::SerializeObject(Roster_WorkingDays,Newtonsoft.Json.Formatting::Indented);
+        return currentnode;
+
+
+
+    }
+
+
+
+    
+    public str RosterWorkingDays(str EmployeeID)
+    {
+
+
+
+        Evs_Roster_OffDayCategory _Evs_Roster_OffDayCategory;
+        eHCM_Helper.Models.Roster_OffDayCategory Roster_OffDayCategory = new eHCM_Helper.Models.Roster_OffDayCategory();
+
+
+
+        try
+        {
+
+
+
+            select * from _Evs_Roster_OffDayCategory where _Evs_Roster_OffDayCategory.EmployeeID == EmployeeID;
+
+
+
+
+            Roster_OffDayCategory.OffDayCategory = _Evs_Roster_OffDayCategory.OffDayCategory;
+            Roster_OffDayCategory.EffectiveDate = _Evs_Roster_OffDayCategory.EffectiveDate;
+            Roster_OffDayCategory.OffDay = _Evs_Roster_OffDayCategory.OffDay;
+            Roster_OffDayCategory.Remarks = _Evs_Roster_OffDayCategory.Remarks;
+            Roster_OffDayCategory.LastDate = _Evs_Roster_OffDayCategory.LastDate;
+
+
+
+        }
+        catch (Exception::CLRError)
+        {
+            System.Exception interopException = CLRInterop::getLastException();
+        }
+
+
+
+        str currentnode = Newtonsoft.Json.JsonConvert::SerializeObject(Roster_OffDayCategory,Newtonsoft.Json.Formatting::Indented);
+        return currentnode;
+
+
+
+    }
+
+
+
+
+}

@@ -1,0 +1,22 @@
+[ExtensionOf(formcontrolstr(SalesTable,Evs_SubmitforApprovals))]
+final class Evs_SalesTableButton_Extension
+{
+    public void clicked()
+    {
+     
+        SalesTable salestable,salestable2;
+        FormButtonControl bc = any2Object(this) as FormButtonControl;
+        FormDataSource ds = bc.formRun().datasource(tableStr(SalesTable));
+        next clicked();
+        salestable=ds.cursor();
+        if(salestable.Evs_SalesOrderApproval!= Evs_SalesApproval::Submitted)
+        {
+            update_recordset salestable2 setting Evs_SalesOrderApproval =Evs_SalesApproval::Submitted , CreditLimitApprovalStatus= CreditLimitApprovalStatus::Submitted where salestable2.SalesId ==salestable.SalesId;
+            info("Workflow has been submitted");
+        }
+        ds.reread();
+       
+        // salestable.refresh();
+    }
+
+}

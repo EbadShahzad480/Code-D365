@@ -1,0 +1,26 @@
+override the dataset override method
+
+
+    [DataSource]
+    class Evs_Roster_OpenShift
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean validateWrite()
+        {
+            boolean ret;
+            dev_GenerateNumberSeq   obj = new dev_GenerateNumberSeq();
+            Evs_Roster_OpenShift    _Evs_Roster_OpenShift;
+
+            _Evs_Roster_OpenShift = Evs_Roster_OpenShift_DS.cursor();
+
+            _Evs_Roster_OpenShift.OpenShiftID = obj.GenerateNextNumberSeq("OpenShift");
+
+            ret = super();
+    
+            return ret;
+        }
+
+    }

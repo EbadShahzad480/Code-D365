@@ -1,0 +1,22 @@
+    [Control("String")]
+    class Evs_Roster_OpenShift_BreakID
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        public void lookup()
+        {
+
+            Query query = new Query(); QueryBuildDataSource queryBuildDataSource; 
+            QueryBuildRange queryBuildRange; 
+            SysTableLookup sysTableLookup = SysTableLookup::newParameters(tableNum(Evs_Break), this);
+            sysTableLookup.addLookupField(fieldNum(Evs_Break,BreakName));
+            //sysTableLookup.addLookupField(fieldNum(MainAccount, Name)); 
+            queryBuildDataSource = query.addDataSource(tableNum(Evs_Break));
+            sysTableLookup.parmQuery(query); sysTableLookup.performFormLookup();
+
+
+            super();
+        }
+
+    }

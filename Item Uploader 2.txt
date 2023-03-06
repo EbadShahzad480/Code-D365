@@ -1,0 +1,59 @@
+using System.IO;
+using OfficeOpenXml;
+using OfficeOpenXml.ExcelPackage;
+using OfficeOpenXml.ExcelRange;
+
+class Evs_LedgerAllocationRuleGroupUploaderClass extends RunBase
+{
+    public static void main(Args _args)
+    {
+        FileUploadTemporaryStorageResult rileuploadresult;
+        System.IO.Stream                 stream;
+        ExcelWorksheet                   worksheet;
+        OfficeOpenXml.ExcelRange         range;
+        int                              rowcount,row;
+        LedgerAllocationRule             ledgerAllocationRule;
+        LedgerAllocationRuleID           ruleIdUpload;
+        Str60                            ruleGroup;
+        rileuploadresult  =_args.parmObject();
+        stream            =rileuploadresult.openResult();
+
+        using (ExcelPackage pakage = new ExcelPackage(stream))
+        {
+            pakage.Load(stream);
+            worksheet=pakage.get_workbook().get_worksheets().get_Item(1);
+            range = worksheet.Cells;
+            rowcount= (worksheet.Dimension.End.Row);
+            for(Row=2;row<=rowcount;Row++)
+            {
+                ruleIdUpload = range.get_Item(row,1).Value;
+                ruleGroup = range.get_Item(row,2).Value;
+                
+                ttsbegin;
+                select forupdate ledgerAllocationRule
+                    where ledgerAllocationRule.RuleId == ruleIdUpload;
+                if(ruleGroup == 'Depreciation')
+                {
+                    ledgerAllocationRule.LedgerAllocationRuleGroup  = LedgerAllocationRuleGroup::Depreciation;
+                }
+                else if(ruleGroup == 'Payroll')
+                {
+                    ledgerAllocationRule.LedgerAllocationRuleGroup  = LedgerAllocationRuleGroup::Payroll;
+                }
+                else if(ruleGroup == 'Indirect')
+                {
+                    ledgerAllocationRule.LedgerAllocationRuleGroup  = LedgerAllocationRuleGroup::Indirect;
+                }
+
+                ledgerAllocationRule.update();
+                ttscommit;
+                
+                
+            }
+            info(strFmt("Total %1 update Record",row-1));
+            //info(strFmt("Total %1 update Record",hcmWorker.RecId));
+
+        }
+    }
+
+}

@@ -1,26 +1,69 @@
-// create a class
-class Dev_GenerateNumberSeq
-{
-    public str 60 GenerateNextNumberSeq(str 60 _Code)
-    {
-        str 100 strNumberSequenceName;
-        if(_Code!="")
-        {
-            strNumberSequenceName=NumberSeq::newGetNumFromCode(
-                _Code, 
-                NumberSeqScopeFactory::createDefaultScope(), 
-                true,
-                true,
-                null,
-                true
-                ).num();
-        }
+//link
+https://dynamics365musings.com/develop-a-d365-number-sequence/
 
-        return strNumberSequenceName;
+public class TutCarIdNumSeq extends NumberSeqApplicationModule
+{
+    protected void loadModule()
+    {
+        NumberSeqDatatype datatype = NumberSeqDatatype::construct();
+
+        datatype.parmDatatypeId(extendedTypeNum(TutCarId));
+        datatype.parmReferenceHelp(literalStr("Unique key used for the cars."));
+        datatype.parmWizardIsContinuous(false);
+        datatype.parmWizardIsManual(NoYes::No);
+        datatype.parmWizardFetchAheadQty(10);
+        datatype.parmWizardIsChangeDownAllowed(NoYes::No);
+        datatype.parmWizardIsChangeUpAllowed(NoYes::No);
+        datatype.parmSortField(1);
+
+        datatype.addParameterType(NumberSeqParameterType::DataArea, true, false);
+        this.create(datatype);
+    }
+
+    public NumberSeqModule numberSeqModule()
+    {
+        return NumberSeqModule::Cust;
+    }
+
+    [SubscribesTo(classstr(NumberSeqGlobal),delegatestr(NumberSeqGlobal,buildModulesMapDelegate))]
+    static void buildModulesMapSubsciber(Map numberSeqModuleNamesMap)
+    {
+        NumberSeqGlobal::addModuleToMap(classnum(TutCarIdNumSeq), numberSeqModuleNamesMap);
     }
 
 }
 
-//calling a class with method
-dev_GenerateNumberSeq   objdev_GenerateNumberSeq= new dev_GenerateNumberSeq();
-                _Evs_PalletMaster.PalletId=objdev_GenerateNumberSeq.GenerateNextNumberSeq("Pallets");
+
+//Runnable Class
+
+class tutLoadCarIdNumSeq
+{
+    /// <summary>
+    /// Runs the class with the specified arguments.
+    /// </summary>
+    /// <param name = "_args">The specified arguments.</param>
+    public static void main(Args _args)
+    {
+        tutCarIdNumSeq tutCarIdNumSeq = new tutCarIdNumSeq();
+        tutCarIdNumSeq.load();
+    }
+
+}
+
+
+//Add the following code to the ‘create‘ method.
+
+public void create(boolean _append = false)
+        {
+            TutCarId tutCarId;
+            NumberSequenceReference numberSequenceReference;
+
+            super(_append);
+
+            numberSequenceReference = NumberSeqReference::findReference(extendedTypeNum(TutCarId));
+            if (numberSequenceReference)
+            {
+                tutCarId = NumberSeq::newGetNum(numberSequenceReference).num();
+                TutCar.CarId = tutCarId;
+            }
+        }

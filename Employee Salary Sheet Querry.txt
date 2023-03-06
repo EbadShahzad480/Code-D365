@@ -1,0 +1,16 @@
+            _queryhcmWorker = qr.get(tablenum(hcmWorker));
+            
+            Connection Con = new Connection();
+            Statement Stmt = Con.createStatement();
+            str sql;
+
+            sql=   " select * from HcmWorker _hcmWorker ";                                                                                                                                                                     
+            sql+=  " join DirPersonName _DirPersonName on _DirPersonName.Person=_hcmWorker.Person  ";                                               
+            sql+=  " join PayrollPayStatement _PayrollPayStatement on _PayrollPayStatement.Worker = _hcmWorker.RecId ";                            
+            sql+=  " join PAYROLLPAYSTATEMENTLINE _PAYROLLPAYSTATEMENTLINE on _PayrollPayStatement.RecId = _PAYROLLPAYSTATEMENTLINE.PayStatement ";
+            sql+=  " join PayrollEarningCode _PayrollEarningCode on _PAYROLLPAYSTATEMENTLINE.EARNINGCODE = _PayrollEarningCode.RecId ";          
+            sql+=  " where _PayrollPayStatement.DATAAREAID='"+curExt()+"'  ";                                                                              
+            sql+=  " and  _PAYROLLPAYSTATEMENTLINE.DATAAREAID='"+curExt()+"' ";
+            sql+=  " and  _hcmWorker.PersonnelNumber='"+_queryhcmWorker.PersonnelNumber+"' ";                                                                                     
+
+            ResultSet R =Stmt.executeQuery(sql);

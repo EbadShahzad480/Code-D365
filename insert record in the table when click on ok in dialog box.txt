@@ -1,0 +1,69 @@
+//insert record in the table when click on ok in dialog box
+//overide click method of OK Button
+[Form]
+public class Evs_PaymentAgreementDialogForm extends FormRun
+{
+    [Control("CommandButton")]
+    class OKButton
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        public void clicked()
+        {
+            Evs_AgreementMasterTbl  _Evs_AgreementMasterTbl,_Evs_AgreementMasterTblUpdate;
+            Args _args = new Args();
+
+ 
+
+            super();
+
+ 
+
+            select * from _Evs_AgreementMasterTbl where _Evs_AgreementMasterTbl.PaymentID == Evs_AgreementMasterTbl_PaymentID.valueStr();
+            if(!_Evs_AgreementMasterTbl)
+            {
+                _Evs_AgreementMasterTbl.PaymentID = Evs_AgreementMasterTbl_PaymentID.valueStr();
+                _Evs_AgreementMasterTbl.AgreementID = Evs_AgreementMasterTbl_AgreementID.valueStr();
+                _Evs_AgreementMasterTbl.PaymentDate = Evs_AgreementMasterTbl_PaymentDate.dateValue();
+                _Evs_AgreementMasterTbl.insert();
+
+ 
+//redirecting to details from after OK button
+
+                _args.record(_Evs_AgreementMasterTbl);
+                MenuFunction menuFunction;
+                menuFunction = new MenuFunction(menuitemDisplayStr(Evs_AgreementDetailsMenu),MenuItemType::Display);
+                menuFunction.run(_args);
+            }
+            else
+            {
+                throw error(strFmt("Payment Id %1 Already exsits.",Evs_AgreementMasterTbl_PaymentID.valueStr()));
+            }
+        }
+    }
+}
+
+
+
+
+
+// init method of details form to get the newly made record
+
+[Form]
+public class Evs_AgreementDetailsForm extends FormRun
+{
+    /// <summary>
+    ///
+    /// </summary>
+    public void init()
+    {
+        Evs_AgreementMasterTbl _Evs_AgreementMasterTbl;
+
+        _Evs_AgreementMasterTbl = element.args().record();
+
+        super();
+
+        Evs_AgreementMasterTbl_ds.query().dataSourceTable(tableNum(Evs_AgreementMasterTbl)).addRange(fieldNum(Evs_AgreementMasterTbl,PaymentId)).value(_Evs_AgreementMasterTbl.PaymentID);
+    }
+}

@@ -1,0 +1,23 @@
+
+    [Control("Time")]
+    class Evs_Roster_OpenShift_ShiftStart
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public boolean modified()
+        {
+            boolean ret;
+        
+            ret = super();
+            Evs_Shift               _Evs_Shift;
+            Evs_Roster_OpenShift    _Evs_Roster_OpenShift;
+            _Evs_Roster_OpenShift = Evs_Roster_OpenShift_ds.cursor();
+
+            _Evs_Roster_OpenShift.ShiftStartActualTime = time2Str(this.value(),TimeSeparator::Colon,TimeFormat::AMPM);
+        
+            return ret;
+        }
+
+    }

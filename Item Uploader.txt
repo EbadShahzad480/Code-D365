@@ -1,0 +1,57 @@
+//action menu (class)
+//display menu (form)
+//form(group->file upload) and (Button Group -> OK & Cancel Button)
+
+
+using System.IO;
+using OfficeOpenXml;
+using OfficeOpenXml.ExcelPackage;
+using OfficeOpenXml.ExcelRange;
+
+class Evs_ItemIdUploader extends RunBase
+{
+
+    public static void main(Args _args)
+    {
+        FileUploadTemporaryStorageResult rileuploadresult;
+        System.IO.Stream                 stream;
+        ExcelWorksheet                   worksheet;
+        OfficeOpenXml.ExcelRange         range;
+        int                              rowcount,row;
+        LedgerAllocationRule             ledgerAllocationRule;
+        LedgerAllocationRuleID           ruleIdUpload;
+        Str60                            ruleGroup;
+        rileuploadresult  =_args.parmObject();
+        stream            =rileuploadresult.openResult();
+
+        using (ExcelPackage pakage = new ExcelPackage(stream))
+        {
+            pakage.Load(stream);
+            worksheet=pakage.get_workbook().get_worksheets().get_Item(1);
+            range = worksheet.Cells;
+            rowcount= (worksheet.Dimension.End.Row);
+            for(Row=2;row<=rowcount;Row++)
+            {
+                RetailInventTable RetailInventTable;
+                str InventItemId = range.get_Item(row,1).Value;
+
+                select * from RetailInventTable where RetailInventTable.itemId ==InventItemId;
+                if(!RetailInventTable)
+                {
+                    ttsbegin;
+                    RetailInventTable.itemId = InventItemId;
+                    RetailInventTable.insert();
+                    ttscommit;
+                }
+                
+               
+                
+                
+            }
+            info("Record Added Successfully");
+            
+
+        }
+    }
+
+}

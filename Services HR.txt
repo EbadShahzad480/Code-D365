@@ -1,0 +1,46 @@
+public str GetAttan(str EmployeeId,utcdatetime LastImportDate)
+    {
+
+
+
+
+        Evs_Attendance _Evs_Attendance;
+        eHCM_Helper.Models.Attendance Attendance = new eHCM_Helper.Models.Attendance();
+
+
+        
+        try
+        {
+            select * from _Evs_Attendance where _Evs_Attendance.EmployeeID == EmployeeId
+                &&  DateTimeUtil::date(_Evs_Attendance.AttendanceDate) ==  DateTimeUtil::date(LastImportDate);
+
+            Attendance.AttendanceType = _Evs_Attendance.AttendanceType;
+
+          
+     
+            
+
+        }
+        catch (Exception::CLRError)
+        {
+            System.Exception interopException = CLRInterop::getLastException();
+        }
+
+        str currentnode = Newtonsoft.Json.JsonConvert::SerializeObject(Attendance,Newtonsoft.Json.Formatting::Indented);
+        //str serializeJSON = FormJsonSerializer::serializeClass(Array1);
+        return currentnode;
+
+    }
+
+
+
+
+
+ &&  DateTimeUtil::date(_Evs_Attendance.AttendanceDate) ==  DateTimeUtil::date(LastImportDate)
+
+            Attendance.CheckIn = any2Str(_Evs_Attendance.checkin);
+            Attendance.CheckOut = any2Str(_Evs_Attendance.CheckOut);
+            Attendance.DelayTime = any2Str(_Evs_Attendance.Delaytime);
+            Attendance.OverTime = any2Str(_Evs_Attendance.Overtime);
+            Attendance.PersonalExit = any2Str(_Evs_Attendance.Personalexit);
+            Attendance.TotalHours = any2Str(_Evs_Attendance.Totalhours);
